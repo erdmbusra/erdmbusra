@@ -1,0 +1,41 @@
+import pandas as pd
+
+# Veri setini yükleyin
+file_path = r'C:\Users\Lenovo\Desktop\model\anaveriseti\1milyon_null_temiz - Kopya.csv'
+df = pd.read_csv(file_path)
+
+# sentiment kolonundaki her bir değerin sayısını bulun
+sentiment_counts = df['sentiment'].value_counts()
+print("Sentiment counts:\n", sentiment_counts)
+
+# sentiment_counts kullanarak her bir sentiment türünün sayısını alın
+sentiment_0_count = sentiment_counts.get(0, 0)
+sentiment_1_count = sentiment_counts.get(1, 0)
+sentiment_2_count = sentiment_counts.get(2, 0)
+
+print("Sentiment 0 (Negative) Count:", sentiment_0_count)
+print("Sentiment 1 (Positive) Count:", sentiment_1_count)
+print("Sentiment 2 (Neutral) Count:", sentiment_2_count)
+
+# En küçük gruptaki örnek sayısını belirleyin
+min_count = min(sentiment_0_count, sentiment_1_count, sentiment_2_count)
+
+# Her bir sentiment değeri için örnek sayısını kontrol edin ve yeterli örnek varsa eşitleyin
+dfs = []
+for sentiment in [0, 1, 2]:
+    if sentiment_counts.get(sentiment, 0) >= min_count:
+        dfs.append(df[df['sentiment'] == sentiment].sample(min_count, random_state=1))
+
+# Eşitlenmiş veri setlerini birleştirin
+if dfs:
+    balanced_df = pd.concat(dfs)
+    # Sonuç veri setini karıştırın (shuffle)
+    balanced_df = balanced_df.sample(frac=1, random_state=1).reset_index(drop=True)
+
+    # Sonuç veri setini kaydedin
+    balanced_file_path = r'C:\Users\Lenovo\Desktop\model\anaveriseti\balanced_1milyon_null_temiz.csv'
+    balanced_df.to_csv(balanced_file_path, index=False)
+
+    print(f"Eşitlenmiş veri seti '{balanced_file_path}' yoluna kaydedildi.")
+else:
+    print("Yeterli örnek yok. Veri seti eşitlenemedi.")
