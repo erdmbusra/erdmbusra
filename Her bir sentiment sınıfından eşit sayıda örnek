@@ -1,0 +1,24 @@
+import pandas as pd
+
+# Dosya yolunu belirtin
+file_path = r'C:\Users\Lenovo\Desktop\model\anaveriseti\1milyon_temiz.csv'
+
+# Veri setini yükleyin
+df = pd.read_csv(file_path)
+
+# Her bir sentiment değerinin sayısını bulun
+sentiment_counts = df['sentiment'].value_counts()
+min_count = sentiment_counts.min()
+
+# Her bir sentiment sınıfından eşit sayıda örnek alın
+balanced_df = df.groupby('sentiment').apply(lambda x: x.sample(min_count)).reset_index(drop=True)
+
+# Yeni dosya yolunu belirtin (dizin mevcut olduğunu ve yazma izninizin olduğunu kontrol edin)
+balanced_file_path = r'C:\Users\Lenovo\Desktop\model\anaveriseti\1milyon_temiz_esitlenmis.csv'
+
+# Dengelenmiş veri setini kaydetmek için tekrar deneyin
+try:
+    balanced_df.to_csv(balanced_file_path, index=False)
+    print(f"Dengelenmiş veri seti '{balanced_file_path}' olarak başarıyla kaydedildi.")
+except Exception as e:
+    print(f"Dosya kaydetme işlemi başarısız oldu. Hata: {str(e)}")
