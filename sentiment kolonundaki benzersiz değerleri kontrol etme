@@ -1,0 +1,23 @@
+import pandas as pd
+
+# CSV dosyasını yükleme
+df = pd.read_csv(r'C:\\Users\\Lenovo\\Desktop\\model\\anaveriseti\\1milyon_null_temiz - Kopya.csv')
+
+# İlk birkaç satırı görüntüleme
+print(df.head())
+
+# sentiment kolonundaki benzersiz değerleri kontrol etme
+print(df['sentiment'].unique())
+# sentiment kolonunu temizleme (örneğin, string olarak '0' varsa)
+df['sentiment'] = pd.to_numeric(df['sentiment'], errors='coerce')
+
+# NaN değerlerini kontrol etme
+print(df['sentiment'].isna().sum())
+# sentiment kolonu 0 olan satırları filtreleme
+filtered_df = df[df['sentiment'] == 2]
+
+# Filtrelenmiş veriyi yeni bir CSV dosyasına yazma
+filtered_df.to_csv(r'C:\\Users\\Lenovo\\Desktop\\model\\anaveriseti\\filtered_2_veri_seti.csv', index=False)
+
+# Filtrelenmiş veri setini kontrol etme
+print(filtered_df.head())
