@@ -1,0 +1,27 @@
+import pandas as pd
+from imblearn.under_sampling import RandomUnderSampler
+
+# CSV dosyasını yükleyin
+file_path = r'C:\\Users\\Lenovo\\Desktop\\model\\anaveriseti\\1milyon_null_temiz - Kopya.csv'
+df = pd.read_csv(file_path)
+
+print("Orijinal Veri Seti:")
+print(df['sentiment'].value_counts())
+
+# Veri setini ve etiketleri ayrıştırma
+X = df['text'].values.reshape(-1, 1)
+y = df['sentiment']
+
+# RandomUnderSampler kullanarak veri setini dengelemek
+rus = RandomUnderSampler(random_state=42)
+X_res, y_res = rus.fit_resample(X, y)
+
+# Dengelemeyi yeni bir DataFrame'e dönüştürmek
+df_resampled = pd.DataFrame({'sentiment': y_res, 'text': X_res.flatten()})
+
+print("\nDengelenmiş Veri Seti:")
+print(df_resampled['sentiment'].value_counts())
+
+# İsteğe bağlı olarak dengelenmiş veri setini yeni bir CSV dosyasına kaydedin
+output_file_path = r'C:\\Users\\Lenovo\\Desktop\\model\\anaveriseti\\dengelenmis_veri_seti2.csv'
+df_resampled.to_csv(output_file_path, index=False)
